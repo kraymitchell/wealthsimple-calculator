@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Want to know how much you can earn switching to Wealthsimple? Use this calculator!" >
+    <title>Wealthsimple Fee Calculator</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CDGSSEGBS1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CDGSSEGBS1');
+    </script>
+    
+    <meta name="keywords" content="Wealthsimple calculator, Canadian banking fees, Big 5 banks comparison, account interest calculator, trading costs Canada, managed investing fees, RBC vs Wealthsimple, BMO fees, CIBC rates, TD bank comparison, Scotiabank calculator">
+    <meta name="author" content="Kray Mitchell">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://calculator.kraymitchell.com/" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://calculator.kraymitchell.com/">
+    <meta property="og:title" content="Wealthsimple Fee Calculator - Compare Banking Fees in Canada">
+    <meta property="og:description" content="Calculate and compare banking fees, trading costs, and interest rates between Wealthsimple and Canada's Big 5 Banks. See how much you could save.">
+    <meta property="og:image" content="https://calculator.kraymitchell.com/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Wealthsimple Fee Calculator">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://calculator.kraymitchell.com/">
+    <meta property="twitter:title" content="Wealthsimple Fee Calculator - Compare Banking Fees in Canada">
+    <meta property="twitter:description" content="Calculate and compare banking fees, trading costs, and interest rates between Wealthsimple and Canada's Big 5 Banks.">
+    <meta property="twitter:image" content="https://calculator.kraymitchell.com/og-image.png">
+    
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+</head>
+<body>
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Banking Fee Calculator",
+      "description": "Compare Canadian banking fees between Wealthsimple and Big 5 Banks. Calculate account interest, trading costs, and managed investing fees.",
+      "url": "https://calculator.kraymitchell.com/",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CAD"
+      },
+      "featureList": [
+        "Account interest calculator",
+        "Trading cost comparison",
+        "Managed investing fee calculator",
+        "Compare Wealthsimple vs RBC, BMO, CIBC, TD, Scotiabank"
+      ],
+      "author": {
+        "@type": "Person",
+        "name": "Kray Mitchell",
+        "url": "https://kraymitchell.com"
+      },
+      "datePublished": "2024-11-01",
+      "dateModified": "2025-11-27",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "ratingCount": "1"
+      }
+    }
+    </script>
+    
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const ExternalLinkIcon = () => (
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+        );
+
+        function BankCalculator() {
+            const [activeTab, setActiveTab] = useState('chequing');
+            const [chequingBalance, setChequingBalance] = useState(10000);
+            const [wealthsimpleTier, setWealthsimpleTier] = useState('core');
+            const [hasDirectDeposit, setHasDirectDeposit] = useState(false);
+            const [numTrades, setNumTrades] = useState(10);
+            const [portfolioValue, setPortfolioValue] = useState(50000);
+            const [wealthsimpleManagedTier, setWealthsimpleManagedTier] = useState('core');
+
+            const calculateChequingInterest = (balance, tier, directDeposit) => {
+                let wealthsimpleRate = 0;
+                
+                if (tier === 'generation') {
+                    wealthsimpleRate = 0.0225;
+                } else if (tier === 'premium') {
+                    wealthsimpleRate = directDeposit ? 0.0225 : 0.0175;
+                } else {
+                    wealthsimpleRate = directDeposit ? 0.0175 : 0.0125;
+                }
+                
+                let rbcRate = 0;
+                if (balance >= 5000) rbcRate = 0.0005;
+                
+                let bmoRate = 0;
+                if (balance < 5000) bmoRate = 0.0005;
+                else if (balance < 25000) bmoRate = 0.0010;
+                else bmoRate = 0.0015;
+                
+                let cibcRate = 0;
+                if (balance < 1000) cibcRate = 0.0005;
+                else if (balance < 5000) cibcRate = 0.0010;
+                else if (balance < 10000) cibcRate = 0.0015;
+                else if (balance < 25000) cibcRate = 0.0020;
+                else if (balance < 50000) cibcRate = 0.0025;
+                else if (balance < 100000) cibcRate = 0.0030;
+                else cibcRate = 0.0035;
+                
+                let tdRate = 0.0001;
+                
+                let scotiaRate = 0;
+                if (balance >= 5000) scotiaRate = 0.0005;
+                
+                return {
+                    wealthsimple: { rate: wealthsimpleRate, amount: balance * wealthsimpleRate / 12 },
+                    rbc: { rate: rbcRate, amount: balance * rbcRate / 12 },
+                    bmo: { rate: bmoRate, amount: balance * bmoRate / 12 },
+                    cibc: { rate: cibcRate, amount: balance * cibcRate / 12 },
+                    td: { rate: tdRate, amount: balance * tdRate / 12 },
+                    scotia: { rate: scotiaRate, amount: balance * scotiaRate / 12 }
+                };
+            };
+
+            const calculateTradingCosts = (trades) => {
+                const isActive = trades >= 50;
+                
+                return {
+                    wealthsimple: 0,
+                    rbc: trades * (isActive ? 6.95 : 9.95),
+                    bmo: trades * (isActive ? 3.95 : 9.95),
+                    cibc: trades * (isActive ? 4.95 : 6.95),
+                    td: trades * (isActive ? 7.00 : 9.99),
+                    scotia: trades * (isActive ? 4.99 : 9.99)
+                };
+            };
+
+            const calculateManagedFees = (value, tier) => {
+                const results = {};
+                
+                let wsFee = 0;
+                let wsMER = 0.0013;
+                
+                // Calculate Wealthsimple fee based on tier
+                if (tier === 'generation') {
+                    // Generation: 0.4% at $500k, scaling down to 0.2% at $10M+
+                    if (value < 500000) {
+                        wsFee = 0.004; // Below $500k still gets 0.4%
+                    } else if (value >= 10000000) {
+                        wsFee = 0.002; // $10M+ gets 0.2%
+                    } else {
+                        // Linear interpolation between $500k (0.4%) and $10M (0.2%)
+                        const range = 10000000 - 500000;
+                        const position = value - 500000;
+                        const feeRange = 0.004 - 0.002;
+                        wsFee = 0.004 - (position / range) * feeRange;
+                    }
+                } else if (tier === 'premium') {
+                    wsFee = 0.004; // 0.4%
+                } else {
+                    // Core
+                    wsFee = 0.005; // 0.5%
+                }
+                
+                results.wealthsimple = {
+                    monthly: value * (wsFee + wsMER) / 12,
+                    annual: value * (wsFee + wsMER),
+                    breakdown: `${(wsFee * 100).toFixed(2)}% mgmt + ${(wsMER * 100).toFixed(2)}% MER`
+                };
+                
+                results.rbc = {
+                    monthly: value * (0.005 + 0.0017) / 12,
+                    annual: value * (0.005 + 0.0017),
+                    breakdown: '0.50% mgmt + 0.17% MER'
+                };
+                
+                let bmoFee = 0;
+                let bmoMER = 0.00275;
+                if (value <= 100000) {
+                    bmoFee = 0.007;
+                } else if (value <= 250000) {
+                    const tier1 = 100000 * 0.007;
+                    const tier2 = (value - 100000) * 0.006;
+                    bmoFee = (tier1 + tier2) / value;
+                } else if (value <= 500000) {
+                    const tier1 = 100000 * 0.007;
+                    const tier2 = 150000 * 0.006;
+                    const tier3 = (value - 250000) * 0.005;
+                    bmoFee = (tier1 + tier2 + tier3) / value;
+                } else {
+                    const tier1 = 100000 * 0.007;
+                    const tier2 = 150000 * 0.006;
+                    const tier3 = 250000 * 0.005;
+                    const tier4 = (value - 500000) * 0.004;
+                    bmoFee = (tier1 + tier2 + tier3 + tier4) / value;
+                }
+                results.bmo = {
+                    monthly: value * (bmoFee + bmoMER) / 12,
+                    annual: value * (bmoFee + bmoMER),
+                    breakdown: `${(bmoFee * 100).toFixed(2)}% mgmt + ${(bmoMER * 100).toFixed(2)}% MER`
+                };
+                
+                results.cibc = {
+                    monthly: value * 0.018 / 12,
+                    annual: value * 0.018,
+                    breakdown: '1.80% all-in MER'
+                };
+                
+                results.td = null;
+                
+                results.scotia = {
+                    monthly: value * 0.0169 / 12,
+                    annual: value * 0.0169,
+                    breakdown: '1.69% all-in MER'
+                };
+                
+                return results;
+            };
+
+            const chequingResults = calculateChequingInterest(chequingBalance, wealthsimpleTier, hasDirectDeposit);
+            const tradingResults = calculateTradingCosts(numTrades);
+            const managedResults = calculateManagedFees(portfolioValue, wealthsimpleManagedTier);
+
+            const getInterestRate = () => {
+                if (wealthsimpleTier === 'generation') return '2.25%';
+                if (wealthsimpleTier === 'premium') return hasDirectDeposit ? '2.25%' : '1.75%';
+                return hasDirectDeposit ? '1.75%' : '1.25%';
+            };
+
+            return (
+                <div className="min-h-screen bg-white overflow-x-hidden">
+                    <div className="bg-black text-white py-16 px-4">
+                        <div className="max-w-5xl mx-auto text-center">
+                            <h1 className="text-5xl sm:text-6xl font-bold mb-4">
+                                Banking Fee Calculator
+                            </h1>
+                            <p className="text-gray-300 text-xl">
+                                See how much you could save with Wealthsimple vs Big 5 Canadian Banks
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div className="w-full px-4 py-4 bg-gray-50 border-b border-gray-200">
+                        <div className="max-w-5xl mx-auto text-center">
+                            <p>Sign up for free to start saving. Get $25 using my referral link: <a href="https://wealthsimple.com/invite/_FBVSG" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: '#000' }}>wealthsimple.com/invite/_FBVSG</a></p>
+                        </div>
+                    </div>
+                                        
+                    <div className="max-w-5xl mx-auto px-4 py-12">
+                        <div className="flex flex-wrap border-b border-gray-200 mb-12">
+                            <button
+                                onClick={() => setActiveTab('chequing')}
+                                className={`px-8 py-4 font-semibold transition-all ${
+                                    activeTab === 'chequing'
+                                        ? 'text-black border-b-2 border-black'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                            >
+                                Account Interest
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('trading')}
+                                className={`px-8 py-4 font-semibold transition-all ${
+                                    activeTab === 'trading'
+                                        ? 'text-black border-b-2 border-black'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                            >
+                                Trading Costs
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('managed')}
+                                className={`px-8 py-4 font-semibold transition-all ${
+                                    activeTab === 'managed'
+                                        ? 'text-black border-b-2 border-black'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                            >
+                                Managed Investing
+                            </button>
+                        </div>
+
+                        {activeTab === 'chequing' && (
+                            <div className="space-y-10">
+                                <div>
+                                    <h2 className="text-3xl font-bold text-black mb-4">Monthly account interest earned</h2>
+                                    
+                                    <div className="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                        <p className="text-sm text-gray-700">
+                                            <strong>Note:</strong> Institutions showing "Savings" accounts do not offer interest on chequing accounts. We've included their savings account rates for comparison. There may be other rates available depending on account type.
+                                        </p>
+                                    </div>
+                                    
+                                    <div className="space-y-8 mb-12">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                                                Account balance
+                                            </label>
+                                            <div className="text-4xl font-bold text-black mb-4">
+                                                ${chequingBalance.toLocaleString()}
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="100000"
+                                                step="1000"
+                                                value={chequingBalance}
+                                                onChange={(e) => setChequingBalance(Number(e.target.value))}
+                                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
+                                            />
+                                        </div>
+
+                                        <div className="p-6 bg-gray-50 rounded-lg">
+                                            <label className="block text-sm font-medium text-gray-700 mb-4">
+                                                Wealthsimple tier & bonuses
+                                            </label>
+                                            
+                                            <div className="flex flex-wrap gap-2 mb-4">
+                                                <button
+                                                    onClick={() => setWealthsimpleTier('core')}
+                                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                                                        wealthsimpleTier === 'core'
+                                                            ? 'bg-black text-white'
+                                                            : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
+                                                    }`}
+                                                >
+                                                    Core (Under $100k)
+                                                </button>
+                                                <button
+                                                    onClick={() => setWealthsimpleTier('premium')}
+                                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                                                        wealthsimpleTier === 'premium'
+                                                            ? 'bg-black text-white'
+                                                            : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
+                                                    }`}
+                                                >
+                                                    Premium ($100k-$500k)
+                                                </button>
+                                                <button
+                                                    onClick={() => setWealthsimpleTier('generation')}
+                                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                                                        wealthsimpleTier === 'generation'
+                                                            ? 'bg-black text-white'
+                                                            : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
+                                                    }`}
+                                                >
+                                                    Generation ($500k+)
+                                                </button>
+                                            </div>
+
+                                            {wealthsimpleTier !== 'generation' ? (
+                                                <div className="flex items-start gap-3">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="directDeposit"
+                                                        checked={hasDirectDeposit}
+                                                        onChange={(e) => setHasDirectDeposit(e.target.checked)}
+                                                        className="mt-0.5 w-4 h-4 accent-black"
+                                                    />
+                                                    <label htmlFor="directDeposit" className="text-sm text-gray-700">
+                                                        With qualifying direct deposits ($2,000+/month for +0.5% boost)
+                                                    </label>
+                                                </div>
+                                            ) : (
+                                                <div className="text-sm text-gray-600">
+                                                    Generation clients already receive the maximum interest rate of 2.25%
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <div className="font-bold text-xl text-black">Wealthsimple Chequing</div>
+                                                    <p className="text-sm text-gray-600 mt-1">
+                                                        Interest rate: {getInterestRate()}
+                                                    </p>
+                                                    <a 
+                                                        href="https://help.wealthsimple.com/hc/en-ca/articles/9730610402075" 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer" 
+                                                        className="text-xs text-gray-600 hover:text-black inline-flex items-center gap-1 mt-1"
+                                                    >
+                                                        View rates <ExternalLinkIcon />
+                                                    </a>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="text-4xl font-bold text-black">
+                                                        ${chequingResults.wealthsimple.amount.toFixed(2)}
+                                                    </div>
+                                                    <div className="text-sm text-gray-600">per month</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {[
+                                            { name: 'RBC Savings', key: 'rbc', link: 'https://www.rbcroyalbank.com/rates/persacct.html' },
+                                            { name: 'BMO Savings', key: 'bmo', link: 'https://www.bmo.com/main/personal/bank-accounts/savings/interest-rates/' },
+                                            { name: 'CIBC Savings', key: 'cibc', link: 'https://www.cibc.com/en/interest-rates/personal-bank-account-rates.html' },
+                                            { name: 'TD Premium Chequing', key: 'td', link: 'https://www.td.com/ca/en/personal-banking/products/bank-accounts/account-rates' },
+                                            { name: 'Scotiabank Savings', key: 'scotia', link: 'https://www.scotiabank.com/ca/en/personal/rates-prices/savings-account-rates.html' }
+                                        ].map((inst) => {
+                                            const result = chequingResults[inst.key];
+                                            const rate = (result.rate * 100).toFixed(2);
+                                            
+                                            return (
+                                                <div key={inst.key} className="bg-white rounded-lg p-6 border border-gray-200">
+                                                    <div className="flex justify-between items-center">
+                                                        <div>
+                                                            <div className="font-bold text-xl text-black">{inst.name}</div>
+                                                            <p className="text-sm text-gray-600 mt-1">
+                                                                Interest rate: {rate}%
+                                                            </p>
+                                                            <a 
+                                                                href={inst.link} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer" 
+                                                                className="text-xs text-gray-600 hover:text-black inline-flex items-center gap-1 mt-1"
+                                                            >
+                                                                View rates <ExternalLinkIcon />
+                                                            </a>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <div className="text-4xl font-bold text-black">
+                                                                ${result.amount.toFixed(2)}
+                                                            </div>
+                                                            <div className="text-sm text-gray-600">per month</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'trading' && (
+                            <div className="space-y-10">
+                                <div>
+                                    <h2 className="text-3xl font-bold text-black mb-8">Monthly trading costs</h2>
+                                    
+                                    <div className="space-y-8 mb-12">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                                                Number of trades per month
+                                            </label>
+                                            <div className="text-4xl font-bold text-black mb-4">
+                                                {numTrades} {numTrades === 1 ? 'trade' : 'trades'}
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="100"
+                                                step="1"
+                                                value={numTrades}
+                                                onChange={(e) => setNumTrades(Number(e.target.value))}
+                                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
+                                            />
+                                        </div>
+
+                                        {numTrades >= 50 && (
+                                            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                                                <p className="text-sm text-green-800 font-medium">
+                                                    ✓ Active trader rates applied (150+ trades per quarter)
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-black">
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <div className="font-bold text-xl text-black">Wealthsimple Trade</div>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <p className="text-sm text-gray-600">$0 per trade</p>
+                                                        <a 
+                                                            href="https://www.wealthsimple.com/en-ca/legal/fees/trade" 
+                                                            target="_blank" 
+                                                            rel="noopener noreferrer" 
+                                                            className="text-xs text-gray-600 hover:text-black inline-flex items-center gap-1"
+                                                        >
+                                                            Details <ExternalLinkIcon />
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="text-4xl font-bold text-black">
+                                                        $0.00
+                                                    </div>
+                                                    <div className="text-sm text-gray-600">total cost</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {[
+                                            { name: "CIBC Investor's Edge", key: 'cibc', standard: '$6.95', active: '$4.95', link: 'https://www.investorsedge.cibc.com/en/pricing.html' },
+                                            { name: 'BMO InvestorLine', key: 'bmo', standard: '$9.95', active: '$3.95', link: 'https://www.bmoinvestorline.com/selfDirected/pdfs/SDFeeSchedule_E.pdf' },
+                                            { name: 'RBC Direct Investing', key: 'rbc', standard: '$9.95', active: '$6.95', link: 'https://www.rbcdirectinvesting.com/pricing/' },
+                                            { name: 'TD Direct Investing', key: 'td', standard: '$9.99', active: '$7.00', link: 'https://www.td.com/ca/en/investing/direct-investing/pricing' },
+                                            { name: 'Scotia iTRADE', key: 'scotia', standard: '$9.99', active: '$4.99', link: 'https://www.scotiaitrade.com/en/home/pricing.html' }
+                                        ].map((inst) => (
+                                            <div key={inst.key} className="bg-white rounded-lg p-6 border border-gray-200">
+                                                <div className="flex justify-between items-center">
+                                                    <div>
+                                                        <div className="font-bold text-xl text-black">{inst.name}</div>
+                                                        <div className="flex items-center gap-2 mt-1">
+                                                            <p className="text-sm text-gray-600">
+                                                                {numTrades >= 50 ? inst.active : inst.standard} per trade
+                                                            </p>
+                                            <a 
+                                                                href={inst.link} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer" 
+                                                                className="text-xs text-gray-600 hover:text-black inline-flex items-center gap-1"
+                                                            >
+                                                                Details <ExternalLinkIcon />
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <div className="text-4xl font-bold text-black">
+                                                            ${tradingResults[inst.key].toFixed(2)}
+                                                        </div>
+                                                        <div className="text-sm text-gray-600">total cost</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'managed' && (
+                            <div className="space-y-10">
+                                <div>
+                                    <h2 className="text-3xl font-bold text-black mb-8">Managed investing fees</h2>
+                                    
+                                    <div className="space-y-8 mb-12">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                                                Portfolio value
+                                            </label>
+                                            <div className="text-4xl font-bold text-black mb-4">
+                                                ${portfolioValue.toLocaleString()}
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="500000"
+                                                step="10000"
+                                                value={portfolioValue}
+                                                onChange={(e) => setPortfolioValue(Number(e.target.value))}
+                                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
+                                            />
+                                        </div>
+
+                                        <div className="p-6 bg-gray-50 rounded-lg">
+                                            <label className="block text-sm font-medium text-gray-700 mb-4">
+                                                Wealthsimple tier (based on total AUM across all accounts)
+                                            </label>
+                                            
+                                            <div className="flex flex-wrap gap-2">
+                                                <button
+                                                    onClick={() => setWealthsimpleManagedTier('core')}
+                                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                                                        wealthsimpleManagedTier === 'core'
+                                                            ? 'bg-black text-white'
+                                                            : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
+                                                    }`}
+                                                >
+                                                    Core (Under $100k) - 0.5%
+                                                </button>
+                                                <button
+                                                    onClick={() => setWealthsimpleManagedTier('premium')}
+                                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                                                        wealthsimpleManagedTier === 'premium'
+                                                            ? 'bg-black text-white'
+                                                            : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
+                                                    }`}
+                                                >
+                                                    Premium ($100k-$500k) - 0.4%
+                                                </button>
+                                                <button
+                                                    onClick={() => setWealthsimpleManagedTier('generation')}
+                                                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                                                        wealthsimpleManagedTier === 'generation'
+                                                            ? 'bg-black text-white'
+                                                            : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
+                                                    }`}
+                                                >
+                                                    Generation ($500k+) - 0.4%-0.2%
+                                                </button>
+                                            </div>
+                                            
+                                            {wealthsimpleManagedTier === 'generation' && (
+                                                <div className="mt-4 text-sm text-gray-600">
+                                                    Generation fees scale from 0.4% at $500k down to 0.2% at $10M+
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {[
+                                            { name: 'Wealthsimple Managed', key: 'wealthsimple', link: 'https://www.wealthsimple.com/en-ca/legal/fees/invest' },
+                                            { name: 'RBC InvestEase', key: 'rbc', link: 'https://www.rbcinvestease.com/pricing-fees.html' },
+                                            { name: 'BMO SmartFolio', key: 'bmo', link: 'https://www.bmo.com/main/personal/investments/online-investing/smartfolio/pricing/' },
+                                            { name: 'CIBC Managed Portfolios', key: 'cibc', link: 'https://www.cibc.com/en/personal-banking/investments/mutual-funds/managed-portfolio-services.html' },
+                                            { name: 'TD', key: 'td', link: null },
+                                            { name: 'Scotia Essentials', key: 'scotia', link: 'https://www.scotiafunds.com/en/home/portfolio-solutions/scotia-essentials-portfolios.html' }
+                                        ].map((inst) => {
+                                            const result = managedResults[inst.key];
+                                            const isNotOffered = result === null;
+                                            
+                                            return (
+                                                <div 
+                                                    key={inst.key} 
+                                                    className={`rounded-lg p-6 ${
+                                                        isNotOffered 
+                                                            ? 'bg-gray-100 border border-gray-300' 
+                                                            : inst.key === 'wealthsimple'
+                                                                ? 'bg-gray-50 border-l-4 border-black'
+                                                                : 'bg-white border border-gray-200'
+                                                    }`}
+                                                >
+                                                    <div className="flex justify-between items-start">
+                                                        <div className="flex-1">
+                                                            <div className={`font-bold text-xl ${isNotOffered ? 'text-gray-400' : 'text-black'}`}>
+                                                                {inst.name}
+                                                            </div>
+                                                            {isNotOffered ? (
+                                                                <p className="text-sm text-gray-500 mt-1">Not offered in Canada</p>
+                                                            ) : (
+                                                                <>
+                                                                    <p className="text-sm text-gray-600 mt-1">{result.breakdown}</p>
+                                                                    {inst.link && (
+                                                                        <a 
+                                                                            href={inst.link} 
+                                                                            target="_blank" 
+                                                                            rel="noopener noreferrer" 
+                                                                            className="text-xs text-gray-600 hover:text-black inline-flex items-center gap-1 mt-1"
+                                                                        >
+                                                                            View fees <ExternalLinkIcon />
+                                                                        </a>
+                                                                    )}
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                        {!isNotOffered && (
+                                                            <div className="text-right">
+                                                                <div className="text-3xl font-bold text-black">
+                                                                    ${result.monthly.toFixed(2)}
+                                                                </div>
+                                                                <div className="text-sm text-gray-600">per month</div>
+                                                                <div className="text-xs text-gray-500 mt-1">
+                                                                    ${result.annual.toFixed(2)}/year
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    <div className="mt-8 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                                        <p className="text-sm text-gray-700">
+                                            <strong>Note:</strong> TD does not offer a managed robo-advisor service in Canada. TD Easy Trade is self-directed only.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="mt-16 p-6 bg-yellow-50 rounded-lg border-2 border-yellow-300">
+                            <h3 className="font-bold text-lg text-gray-900 mb-2">Important Disclaimer</h3>
+                            <p className="text-sm text-gray-700 mb-2">
+                                <strong>Rates and fees last verified:</strong> November 2025
+                            </p>
+                            <p className="text-sm text-gray-700 mb-2">
+                                Always verify current rates and fees directly with each financial institution before making any decisions. Interest rates and fees change frequently and may vary based on account type, balance, and other factors.
+                            </p>
+                            <p className="text-sm text-gray-700">
+                                This calculator is an independent tool and is not endorsed by, or backed by Wealthsimple or any of the Big 5 Banks (RBC, BMO, CIBC, TD, Scotiabank).
+                            </p>
+                        </div>
+
+                        <div className="mt-8 pt-8 border-t border-gray-200 text-center text-sm text-gray-500">
+                            <p>Built with &hearts; by <a href="https://kraymitchell.com" className="hover:text-gray-700">Kray</a></p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<BankCalculator />, document.getElementById('root'));
+    </script>
+</body>
+</html>
