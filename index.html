@@ -349,7 +349,13 @@
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-3">Portfolio value</label>
                                             <div className="text-4xl font-bold text-black mb-4">${portfolioValue.toLocaleString()}</div>
-                                            <input type="range" min="0" max="500000" step="10000" value={portfolioValue} onChange={(e) => setPortfolioValue(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black" />
+                                            <input type="range" min="0" max="500000" step="10000" value={portfolioValue} onChange={(e) => {
+                                                const val = Number(e.target.value);
+                                                setPortfolioValue(val);
+                                                if (val >= 500000) setWealthsimpleManagedTier('generation');
+                                                else if (val >= 100000) setWealthsimpleManagedTier('premium');
+                                                else setWealthsimpleManagedTier('core');
+                                            }} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black" />
                                         </div>
                                         <div className="p-6 bg-gray-50 rounded-lg">
                                             <label className="block text-sm font-medium text-gray-700 mb-4">Wealthsimple tier (based on total AUM across all accounts)</label>
